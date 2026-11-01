@@ -1,0 +1,54 @@
+
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ValidationPipe,
+} from "@nestjs/common";
+
+import { UserService } from "./user.service";
+import { CreateUserDto, UpdateUserDto } from "./dto/user.dto";
+
+@Controller("users")
+export class UserController {
+  constructor(private readonly userService: UserService) {}
+
+  @Get()
+  async getUsers() {
+    return await this.userService.getUsers();
+  }
+
+  @Post()
+  async createUser(
+    @Body(new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }))
+    dto: CreateUserDto,
+  ) {
+    return await this.userService.createUser(dto);
+  }
+
+  @Patch(":id")
+  async updateUser(
+    @Param("id") id: string,
+    @Body(new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }))
+    dto: UpdateUserDto,
+  ) {
+    return await this.userService.updateUser(id, dto);
+  }
+
+  @Delete(":id")
+  async deleteUser(@Param("id") id: string) {
+    return await this.userService.deleteUser(id);
+  }
+}
